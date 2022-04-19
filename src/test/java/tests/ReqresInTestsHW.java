@@ -1,18 +1,25 @@
 package tests;
 
+import io.restassured.response.Response;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.time.Instant;
 
 import static io.restassured.RestAssured.*;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReqresInTestsHW {
 
-//---1
+// №1
     @Test
     void registerNewUserTest200() {
         /*
+        ВХОДНЫЕ ДАННЫЕ:
+
         request: https://reqres.in/api/register
 
         data:
@@ -41,12 +48,11 @@ public class ReqresInTestsHW {
                 .body("token", is("QpwL5tke4Pnpja7X4"));
     }
 
-//---2
-
-    String data = "{\"name\": \"morpheus2\", \"job\": \"zion resident1\"}";
+// №2
 
     @Test
     void updateUserTest() {
+        String data = "{\"name\": \"morpheus2\", \"job\": \"zion resident1\"}";
         given()
                 .body(data)
                 .contentType(JSON)
@@ -57,10 +63,12 @@ public class ReqresInTestsHW {
                 .body("job", is("zion resident1"));
     }
 
-//---2b
+// №2b
     @Test
     void updateUserTest2() {
         /*
+        ВХОДНЫЕ ДАННЫЕ:
+
 request: https://reqres.in/api/users/2
 
 data:
@@ -93,7 +101,7 @@ response:
                 .body("name", is("morpheus"));
     }
 
-//----3
+// №3
 
     @Test
     void deleteUserTest204a() {
@@ -104,7 +112,7 @@ response:
         System.out.println(response);
     }
 
-//----3b
+// №3b
     @Test
     void deleteUserTest204b() {
         given()
@@ -114,10 +122,12 @@ response:
                 .statusCode(204);
     }
 
-//----4
+// №4
     @Test //get SINGLE USER NOT FOUND
     void singleUserNotFound404() {
           /*
+        ВХОДНЫЕ ДАННЫЕ:
+
         request: https://reqres.in/api/users/23
         response: 404
         response: {}
@@ -131,7 +141,7 @@ response:
         System.out.println(response);
     }
 
-//----5
+// №5
 
     @Test
     void delayedResponse1() {
@@ -144,11 +154,13 @@ response:
     }
 
 
-//----6
+// №6
 
     @Test //get SINGLE <RESOURCE>
     void singleResource200unknown2() {
         /*
+        ВХОДНЫЕ ДАННЫЕ:
+
         request: https://reqres.in/api/unknown/2
         response: 200
         response:
@@ -175,7 +187,7 @@ response:
 
         given()
                 .contentType(JSON)
-                //.body(data)
+                .body(data)
                 .when()
                 .get("https://reqres.in/api/unknown/2")
                 .then()
@@ -190,17 +202,49 @@ response:
 
     }
 
+    // №7
+    @Test
+    @DisplayName("Проверка времени")
+    void updatePutTestDemo() {
+        Instant timestamp = Instant.now();
+        timestamp = timestamp.minusSeconds(3);
 
-//====7?  падает на "createdAt"
+        String updateData = "{\"name\":\"morpheus\",\"job\":\"zion resident\"}";
+
+        Response response = given()
+                .body(updateData)
+                .contentType(JSON)
+                .when()
+                .put("https://reqres.in/api/users/2")
+                //.put("/api/users/2") short
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        Instant reqInstant = Instant.parse(response.path("updatedAt"));
+        System.out.println(timestamp.toString());
+        System.out.println(reqInstant.toString());
+        System.out.println(timestamp.isBefore(reqInstant));
+
+        assertTrue(timestamp.isBefore(reqInstant));
+    }
+
+
+// №8  падает на "createdAt"
 
     @Test
     /*
+    ВХОДНЫЕ ДАННЫЕ:
+
     data:
     {
     "name": "morpheus",
     "job": "leader"
 }
+
 Response 201
+
 Response
 {
     "name": "morpheus",
@@ -211,6 +255,7 @@ Response
      */
     void createUserTests201() {
         String data = "{\"name\": \"morpheus\", \"job\": \"leader\"}";
+        Instant timestamp = Instant.now();
 
         given()
                 .contentType(JSON)
@@ -221,66 +266,8 @@ Response
                 .statusCode(201)
                 .body("name", is("morpheus"))
                 .body("job", is("leader"))
-        //.body("body.createdAt", is("2022-04-12T15:00:43.074Z")) //??
+                //.body("body.createdAt", is("2022-04-12T15:00:43.074Z")) //??
+                .body("body.createdAt", is(timestamp)) //??
         ;
     }
-
-//-----8? как оформить, если проверочные даныне это фрагмент массива?
-    @Test
-    void delayedResponse2() {
-
-        /*
-        request: https://reqres.in/api/users?delay=3
-        response: 200
-        response:
-
-        {
-    "page": 1,
-    "per_page": 6,
-    "total": 12,
-    "total_pages": 2,
-    "data": [
-        {
-            "id": 1,
-            "email": "george.bluth@reqres.in",
-            "first_name": "George",
-            "last_name": "Bluth",
-            "avatar": "https://reqres.in/img/faces/1-image.jpg"
-        },
-        {
-            "id": 2,
-            "email": "janet.weaver@reqres.in",
-            "first_name": "Janet",
-            "last_name": "Weaver",
-            "avatar": "https://reqres.in/img/faces/2-image.jpg"
-        },
-        {
-            "id": 3,
-            "email": "emma.wong@reqres.in",
-            "first_name": "Emma",
-            "last_name": "Wong",
-            "avatar": "https://reqres.in/img/faces/3-image.jpg"
-        },
-        ....................
-        }
-    ],
-    "support": {
-        "url": "https://reqres.in/#support-heading",
-        "text": "To keep ReqRes free, contributions towards server costs are appreciated!"
-    }
-}
-    */
-        given()
-                .when()
-                .get("https://reqres.in/api/users?delay=3")
-                .then()
-                .statusCode(200)
-                .body("total", is(12))
-                .body("per_page", is(6))
-                //.body("data.id", is(1)) //?
-                //.body("data.email", is("george.bluth@reqres.in")) //??
-                .body("support.url", is("https://reqres.in/#support-heading"))
-                .body("support.text", is("To keep ReqRes free, contributions towards server costs are appreciated!"));
-    }
-
 }
