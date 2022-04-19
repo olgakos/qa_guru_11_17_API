@@ -232,11 +232,7 @@ response:
 
 
 // №8  падает на "createdAt"
-
-    @Test
-    @DisplayName("Проверка Создания юзера с точным временем")
-
-        /*
+            /*
     ВХОДНЫЕ ДАННЫЕ:
 data:
     {"name": "morpheus",
@@ -249,6 +245,8 @@ Response
     "createdAt": "2022-04-12T15:00:43.074Z"}
      */
 
+    @Test
+    @DisplayName("Проверка Создания юзера с точным временем")
     void createUserTests201() {
 
         Instant timestamp = Instant.now();
@@ -265,15 +263,15 @@ Response
                 .body("name", is("morpheus"))
                 .body("job", is("leader"))
                 .extract()
-        //.response("createdAt", is("2022-04-12T15:00:43.074Z"))
-        //.body("body.createdAt", is("2022-04-12T15:00:43.074Z")) //??;
-    }
+                .response("createdAt", is("2022-04-12T15:00:43.074Z"))
+        //.body("body.createdAt", is("2022-04-12T15:00:43.074Z")) //??
+        ;
+
         Instant reqInstant = Instant.parse(response.path("updatedAt"));
-        //System.out.println(timestamp.toString());
-        //System.out.println(reqInstant.toString());
-        //System.out.println(timestamp.isBefore(reqInstant));
+        System.out.println(timestamp.toString());
+        System.out.println(reqInstant.toString());
+        System.out.println(timestamp.isBefore(reqInstant));
 
         assertTrue(timestamp.isBefore(reqInstant));
-
     }
 }
