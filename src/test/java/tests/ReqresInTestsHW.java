@@ -97,7 +97,7 @@ response:
                 .put("https://reqres.in/api/users/2") //put!
                 .then()
                 .statusCode(200)
-                //.body("updatedAt", is("2022-04-12T11:51:24.860Z"));
+                //.body("updatedAt", is("2022-04-12T15:00:43.074Z"));
                 .body("name", is("morpheus"));
     }
 
@@ -207,7 +207,7 @@ response:
     @DisplayName("Проверка времени")
     void updatePutTestDemo() {
         Instant timestamp = Instant.now();
-        timestamp = timestamp.minusSeconds(3);
+        timestamp = timestamp.minusSeconds(5);
 
         String updateData = "{\"name\":\"morpheus\",\"job\":\"zion resident\"}";
 
@@ -234,40 +234,46 @@ response:
 // №8  падает на "createdAt"
 
     @Test
-    /*
+    @DisplayName("Проверка Создания юзера с точным временем")
+
+        /*
     ВХОДНЫЕ ДАННЫЕ:
-
-    data:
-    {
-    "name": "morpheus",
-    "job": "leader"
-}
-
+data:
+    {"name": "morpheus",
+    "job": "leader"}
 Response 201
-
 Response
-{
-    "name": "morpheus",
+{"name": "morpheus",
     "job": "leader",
     "id": "66",
-    "createdAt": "2022-04-12T15:00:43.074Z"
-}
+    "createdAt": "2022-04-12T15:00:43.074Z"}
      */
-    void createUserTests201() {
-        String data = "{\"name\": \"morpheus\", \"job\": \"leader\"}";
-        Instant timestamp = Instant.now();
 
-        given()
+    void createUserTests201() {
+
+        Instant timestamp = Instant.now();
+        timestamp = timestamp.minusSeconds(10);
+        String data = "{\"name\": \"morpheus\", \"job\": \"leader\"}";
+
+        Response response = given()
                 .contentType(JSON)
                 .body(data)
                 .when()
                 .post("https://reqres.in/api/users")//post!
                 .then()
-                .statusCode(201)
+                //.statusCode(201)
                 .body("name", is("morpheus"))
                 .body("job", is("leader"))
-                //.body("body.createdAt", is("2022-04-12T15:00:43.074Z")) //??
-                .body("body.createdAt", is(timestamp)) //??
-        ;
+                .extract()
+        //.response("createdAt", is("2022-04-12T15:00:43.074Z"))
+        //.body("body.createdAt", is("2022-04-12T15:00:43.074Z")) //??;
+    }
+        Instant reqInstant = Instant.parse(response.path("updatedAt"));
+        //System.out.println(timestamp.toString());
+        //System.out.println(reqInstant.toString());
+        //System.out.println(timestamp.isBefore(reqInstant));
+
+        assertTrue(timestamp.isBefore(reqInstant));
+
     }
 }
