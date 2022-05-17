@@ -230,7 +230,7 @@ response:
         assertTrue(timestamp.isBefore(reqInstant));
     }
 
-
+//------------------------------??-------------------------------
 // №8  падает на "createdAt"
             /*
     ВХОДНЫЕ ДАННЫЕ:
@@ -262,10 +262,12 @@ Response
                 //.statusCode(201)
                 .body("name", is("morpheus"))
                 .body("job", is("leader"))
+                .body("body.createdAt", is("2022-04-12T15:00:43.074Z"))//(before Extract!)
                 .extract()
-                .response("createdAt", is("2022-04-12T15:00:43.074Z"))
-        //.body("body.createdAt", is("2022-04-12T15:00:43.074Z")) //??
-        ;
+                .response()
+                //.response("createdAt", is("2022-04-12T15:00:43.074Z"))
+                //.response("body.createdAt", is("2022-04-12T15:00:43.074Z"))
+                ;
 
         Instant reqInstant = Instant.parse(response.path("updatedAt"));
         System.out.println(timestamp.toString());
