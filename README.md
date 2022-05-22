@@ -1,8 +1,8 @@
 qa_guru_17_API
 
-# Проект по автоматизации тестирования API (mini demo)
+# Проект по автоматизации тестирования API 
+##(mini demo)
 :earth_americas: https://reqres.in
-
 В данном demo выполнен пример автоматизации тестирования API с помощью Java.
 API взят из публичного источника.
 
@@ -12,17 +12,16 @@ API взят из публичного источника.
 - [Запуск из терминала](#watermelon-Запуск-тестов-из-терминала)
 
 ## :watermelon: Технологии и инструменты
-
 <p align="center">
 <a href="https://www.java.com/"><img src="images/logo/Java.svg" width="50" height="50"  alt="Java"/></a>
 <a href="https://gradle.org/"><img src="images/logo/Gradle.svg" width="50" height="50"  alt="Gradle"/></a>
 <a href="https://https://rest-assured.io//"><img src="images/logo/RestAssured.svg" width="50" height="50"  alt="Rest-Assured" title="Rest-Assured"></a>
 </p>
 
-Перечень технологий и инструментом, использованных при реализации этого проекта:
+Перечень технологий и инструментов, использованных при реализации этого проекта:
 - Автотесты написаны на языке `Java`
 - Для сборки проекта используется `Gradle`
-- Java-библиота для автоматизации тестирования REST-API: `REST Assured`
+- Java-библиотека для автоматизации тестирования REST-API: `REST Assured`
 - Библиотека для проверок `assertThat`
 
 ## :watermelon: Реализованные проверки
@@ -50,4 +49,4 @@ gradle clean test
 
 -------------
 P.S. Создание Allure-отчета, удаленный запуск в Jenkins, отправка отчета в Телеграмм-бот, а так же запись видео прохождения тестов в Selenoid в данном мини-проекте не предусмотрены.
-ver 2022-05-22
+<p>ver 2022-05-22
