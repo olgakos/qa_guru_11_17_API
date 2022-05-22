@@ -10,7 +10,7 @@ import static io.restassured.RestAssured.*;
 
 
 
-public class ReqresinTestsDemo {
+public class ReqresInTestsDemo {
 
    // @BeforeAll
     //static void setUp() {
@@ -73,7 +73,7 @@ public class ReqresinTestsDemo {
     }
 
 
-    // (17) еще несколкьо коротких демо-тестов к этому сайту:
+    // еще несколкьо коротких демо-тестов к этому сайту:
 
     @Test
     void singlUserTest(){

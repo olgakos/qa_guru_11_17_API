@@ -7,15 +7,15 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 
 import static io.restassured.RestAssured.*;
-import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReqresInTestsHW {
 
-// №1
+    // №1
     @Test
+    @DisplayName("Регистрация нового юзера")
     void registerNewUserTest200() {
         /*
         ВХОДНЫЕ ДАННЫЕ:
@@ -48,9 +48,9 @@ public class ReqresInTestsHW {
                 .body("token", is("QpwL5tke4Pnpja7X4"));
     }
 
-// №2
-
+    // №2
     @Test
+    @DisplayName("Обновить пользователя")
     void updateUserTest() {
         String data = "{\"name\": \"morpheus2\", \"job\": \"zion resident1\"}";
         given()
@@ -63,8 +63,9 @@ public class ReqresInTestsHW {
                 .body("job", is("zion resident1"));
     }
 
-// №2b
+    // №2b
     @Test
+    @DisplayName("Обновить пользователя")
     void updateUserTest2() {
         /*
         ВХОДНЫЕ ДАННЫЕ:
@@ -101,9 +102,9 @@ response:
                 .body("name", is("morpheus"));
     }
 
-// №3
-
+    // №3
     @Test
+    @DisplayName("Пользователь удален (204)")
     void deleteUserTest204a() {
         String response = delete("https://reqres.in/api/users/2")
                 .then()
@@ -112,8 +113,9 @@ response:
         System.out.println(response);
     }
 
-// №3b
+    // №3b
     @Test
+    @DisplayName("Пользователь удален (204)")
     void deleteUserTest204b() {
         given()
                 .when()
@@ -122,16 +124,18 @@ response:
                 .statusCode(204);
     }
 
-// №4
-    @Test //get SINGLE USER NOT FOUND
-    void singleUserNotFound404() {
-          /*
+    // №4
+     /*
         ВХОДНЫЕ ДАННЫЕ:
 
         request: https://reqres.in/api/users/23
         response: 404
         response: {}
      */
+    @Test //get SINGLE USER NOT FOUND
+    @DisplayName("Пользователь не найден (404)")
+    void singleUserNotFound404() {
+
         String response =
                 get("https://reqres.in/api/users/23")
                         .then()
@@ -141,9 +145,9 @@ response:
         System.out.println(response);
     }
 
-// №5
-
+    // №5
     @Test
+    @DisplayName("Вывести response на консоль")
     void delayedResponse1() {
         String response =
                 get("https://reqres.in/api/users?delay=3")
@@ -154,13 +158,12 @@ response:
     }
 
 
-// №6
-
+    // №6
     @Test //get SINGLE <RESOURCE>
+    @DisplayName("Проверка текста ответа")
     void singleResource200unknown2() {
         /*
         ВХОДНЫЕ ДАННЫЕ:
-
         request: https://reqres.in/api/unknown/2
         response: 200
         response:
@@ -199,12 +202,11 @@ response:
                 .body("data.pantone_value", is("17-2031"))
                 .body("support.url", is("https://reqres.in/#support-heading"))
                 .body("support.text", is("To keep ReqRes free, contributions towards server costs are appreciated!"));
-
     }
 
     // №7
     @Test
-    @DisplayName("Проверка времени")
+    @DisplayName("Проверка времени совершения обновления")
     void updatePutTestDemo() {
         Instant timestamp = Instant.now();
         timestamp = timestamp.minusSeconds(5);
@@ -230,9 +232,8 @@ response:
         assertTrue(timestamp.isBefore(reqInstant));
     }
 
-//------------------------------??-------------------------------
-// №8  падает на "createdAt"
-            /*
+// №8 "createdAt"
+   /*
     ВХОДНЫЕ ДАННЫЕ:
 data:
     {"name": "morpheus",
@@ -246,8 +247,8 @@ Response
      */
 
     @Test
-    @DisplayName("Проверка Создания юзера с точным временем")
-    void createUserTests201() {
+    @DisplayName("Проверка создания пользователя с точным временем создания")
+    void createUserTests201_updVer() {
 
         Instant timestamp = Instant.now();
         timestamp = timestamp.minusSeconds(10);
@@ -259,21 +260,17 @@ Response
                 .when()
                 .post("https://reqres.in/api/users")//post!
                 .then()
-                //.statusCode(201)
-                .body("name", is("morpheus"))
-                .body("job", is("leader"))
-                .body("body.createdAt", is("2022-04-12T15:00:43.074Z"))//(before Extract!)
-                .extract()
-                .response()
-                //.response("createdAt", is("2022-04-12T15:00:43.074Z"))
-                //.response("body.createdAt", is("2022-04-12T15:00:43.074Z"))
-                ;
+                .log().all()
+                .statusCode(201)
+                .extract().response();
 
-        Instant reqInstant = Instant.parse(response.path("updatedAt"));
-        System.out.println(timestamp.toString());
-        System.out.println(reqInstant.toString());
-        System.out.println(timestamp.isBefore(reqInstant));
+        String name = response.path("name");
+        assertTrue(name.equals("morpheus"));
 
-        assertTrue(timestamp.isBefore(reqInstant));
+        String job = response.path("job");
+        assertTrue(job.equals("leader"));
+
+        String createdAt = response.path("createdAt");
+        assertTrue(timestamp.isBefore(Instant.parse(createdAt)));
     }
 }
